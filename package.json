@@ -1,0 +1,22 @@
+{
+  "name": "smart-college-event-and-club-management-system",
+  "version": "1.0.0",
+  "description": "Smart College Event and Club Management System - Complete 3-Week MERN Stack Implementation",
+  "scripts": {
+    "dev:server": "npm --prefix server run dev",
+    "dev:client": "npm --prefix client run dev",
+    "seed": "npm --prefix server run seed",
+    "install:all": "npm --prefix server install && npm --prefix client install"
+  },
+  "keywords": [
+    "mern",
+    "college-event-management",
+    "club-management",
+    "react",
+    "nodejs",
+    "express",
+    "mongodb"
+  ],
+  "author": "",
+  "license": "MIT"
+}
