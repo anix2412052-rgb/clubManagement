@@ -58,15 +58,55 @@ app.use('*', (req, res) => {
 });
 
 // Start Server after connecting to database
+
 const startServer = async () => {
   try {
+    // Check whether this API is already running on the configured port
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:${PORT}/api/health`,
+        { signal: AbortSignal.timeout(2000) }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+
+        if (data.status === 'ok') {
+          console.log(
+            `✅ CampusHub API is already running on http://localhost:${PORT}`
+          );
+          return;
+        }
+      }
+    } catch {
+      // No responding API found; continue with normal startup
+    }
+
     await connectDB();
-    app.listen(PORT, () => {
-      console.log(`🚀 Server running on http://localhost:${PORT}`);
+
+    const server = app.listen(PORT, () => {
+      console.log(
+        `🚀 Server running on http://localhost:${PORT}`
+      );
+    });
+
+    server.on('error', (err) => {
+      if (err.code === 'EADDRINUSE') {
+        console.error(
+          `❌ Port ${PORT} is occupied by another process.`
+        );
+        console.error(
+          'Stop the other process or configure a different PORT.'
+        );
+      } else {
+        console.error('Server startup error:', err.message);
+      }
+
+      process.exitCode = 1;
     });
   } catch (err) {
-    console.error('Failed to start server:', err);
-    process.exit(1);
+    console.error('Failed to start server:', err.message);
+    process.exitCode = 1;
   }
 };
 
